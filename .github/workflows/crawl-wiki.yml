@@ -1,5 +1,8 @@
 name: Crawl TFG Wiki
 
+permissions:
+  contents: write
+  
 on:
   schedule:
     - cron: "0 5 * * 1"   # every Monday at 05:00 UTC
