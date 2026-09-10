@@ -1,0 +1,30 @@
+name: Crawl TFG Wiki
+
+on:
+  schedule:
+    - cron: "0 5 * * 1"   # every Monday at 05:00 UTC
+  workflow_dispatch: {}   # lets you also click "Run workflow" manually on GitHub
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run crawler
+        run: python crawl_wiki.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "tfg-expert-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add data/wiki.json
+          git diff --cached --quiet || git commit -m "Auto-update wiki data"
+          git push
